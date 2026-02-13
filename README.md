@@ -4,7 +4,7 @@
 
 ## 功能特点
 
-- **成绩管理** - 添加、编辑、删除课程成绩，自动计算 GPA 和加权平均分
+- **成绩管理** - 添加、编辑、删除课程成绩，自动计算 GPA 和加权平均分，支持自定义绩点算法
 - **荣誉档案** - 记录奖学金、竞赛获奖、荣誉称号等各类荣誉
 - **毕业追踪** - 设置毕业学分要求，可视化显示毕业进度
 - **保研模拟** - 输入目标院校要求，评估竞争力并获取提升建议
@@ -26,11 +26,13 @@
 ```
 Scores_management_system/
 ├── main.py                 # 应用入口
+├── 启动 AcademicHub.bat    # Windows 快速启动脚本
 ├── requirements.txt        # 依赖列表
-├── SPEC.md                 # 规格说明文档
-├── data/                   # 数据目录
+├── README.md              # 说明文档
+├── SPEC.md                # 规格说明文档
+├── data/                  # 数据目录
 │   └── academic.db         # SQLite 数据库
-└── academic_hub/           # 主应用包
+└── academic_hub/          # 主应用包
     ├── app.py              # 主窗口
     ├── config.py           # 配置管理
     ├── database.py         # 数据库操作
@@ -43,8 +45,8 @@ Scores_management_system/
     │   └── resume.py       # 简历导出
     ├── widgets/            # UI 组件
     │   ├── navigation.py   # 导航栏
-    │   ├── cards.py       # 卡片组件
-    │   └── dialogs.py     # 对话框
+    │   ├── cards.py        # 卡片组件
+    │   └── dialogs.py      # 对话框
     └── utils/              # 工具函数
         ├── theme.py        # 主题管理
         └── export.py      # 导出功能
@@ -64,10 +66,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
+或者双击 `启动 AcademicHub.bat` 快速启动
+
 ## 使用说明
 
 ### 成绩管理
 在"成绩管理"页面，点击"添加成绩"按钮录入课程信息，包括课程名称、类型（必修/选修/限选）、学分、成绩和学期。系统会自动计算 GPA 和加权平均分。
+
+点击"绩点设置"可以切换 GPA 计算方式：
+- **标准算法**：90-100分 → 4.0绩点，85-89分 → 3.7绩点，以此类推
+- **自定义绩点**：可根据各高校具体规则自定义每个分数段对应的绩点值
 
 ### 荣誉档案
 在"荣誉档案"页面可以添加各类荣誉记录，包括奖学金、竞赛获奖、荣誉称号等，并支持按类型筛选查看。
