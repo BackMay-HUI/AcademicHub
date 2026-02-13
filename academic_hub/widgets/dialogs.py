@@ -41,6 +41,11 @@ class AddGradeDialog(QDialog):
         self.score.setPlaceholderText("如: 85")
         layout.addRow("成绩:", self.score)
 
+        # 绩点（选填）
+        self.gpa = QLineEdit()
+        self.gpa.setPlaceholderText("如: 3.7（选填，不填则自动计算）")
+        layout.addRow("绩点:", self.gpa)
+
         # 学期
         self.semester = QComboBox()
         self.semester.addItems(SEMESTERS)
@@ -58,17 +63,26 @@ class AddGradeDialog(QDialog):
             self.course_type.setCurrentText(self.grade_data['course_type'])
             self.credits.setText(str(self.grade_data['credits']))
             self.score.setText(str(self.grade_data['score']))
+            if self.grade_data.get('gpa'):
+                self.gpa.setText(str(self.grade_data['gpa']))
             self.semester.setCurrentText(self.grade_data['semester'])
 
         self.setLayout(layout)
         self.apply_theme()
 
     def get_data(self):
+        gpa_value = None
+        if self.gpa.text():
+            try:
+                gpa_value = float(self.gpa.text())
+            except:
+                gpa_value = None
         return {
             'course_name': self.course_name.text(),
             'course_type': self.course_type.currentText(),
             'credits': float(self.credits.text()) if self.credits.text() else 0,
             'score': float(self.score.text()) if self.score.text() else 0,
+            'gpa': gpa_value,
             'semester': self.semester.currentText()
         }
 

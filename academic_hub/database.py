@@ -7,7 +7,7 @@ def init_db():
     with get_db() as conn:
         cursor = conn.cursor()
 
-        # 成绩表
+        # 成绩表 - 添加gpa字段
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS grades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,10 +15,17 @@ def init_db():
                 course_type TEXT NOT NULL,
                 credits REAL NOT NULL,
                 score REAL NOT NULL,
+                gpa REAL,
                 semester TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+
+        # 检查gpa列是否存在，不存在则添加
+        cursor.execute("PRAGMA table_info(grades)")
+        columns = [row[1] for row in cursor.fetchall()]
+        if 'gpa' not in columns:
+            cursor.execute("ALTER TABLE grades ADD COLUMN gpa REAL")
 
         # 荣誉表
         cursor.execute('''
@@ -83,12 +90,12 @@ def get_db():
         conn.close()
 
 # ===== 成绩操作 =====
-def add_grade(course_name, course_type, credits, score, semester):
+def add_grade(course_name, course_type, credits, score, semester, gpa=None):
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO grades (course_name, course_type, credits, score, semester) VALUES (?, ?, ?, ?, ?)",
-            (course_name, course_type, credits, score, semester)
+            "INSERT INTO grades (course_name, course_type, credits, score, gpa, semester) VALUES (?, ?, ?, ?, ?, ?)",
+            (course_name, course_type, credits, score, gpa, semester)
         )
         conn.commit()
         return cursor.lastrowid
@@ -96,15 +103,15 @@ def add_grade(course_name, course_type, credits, score, semester):
 def get_all_grades():
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM grades ORDER BY semester DESC, created_at DESC")
+        cursor.execute("SELECT id, course_name, course_type, credits, score, gpa, semester, created_at FROM grades ORDER BY semester DESC, created_at DESC")
         return cursor.fetchall()
 
-def update_grade(id, course_name, course_type, credits, score, semester):
+def update_grade(id, course_name, course_type, credits, score, semester, gpa=None):
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE grades SET course_name=?, course_type=?, credits=?, score=?, semester=? WHERE id=?",
-            (course_name, course_type, credits, score, semester, id)
+            "UPDATE grades SET course_name=?, course_type=?, credits=?, score=?, gpa=?, semester=? WHERE id=?",
+            (course_name, course_type, credits, score, gpa, semester, id)
         )
         conn.commit()
 
@@ -241,8 +248,8 @@ def get_grade_stats():
         """)
         credits_by_type = {row[0]: row[1] for row in cursor.fetchall()}
 
-        # 获取所有成绩用于GPA计算
-        cursor.execute("SELECT credits, score FROM grades")
+        # 获取所有成绩用于GPA计算 - 包含gpa字段
+        cursor.execute("SELECT credits, score, gpa FROM grades")
         grades = cursor.fetchall()
 
         # GPA计算: Σ(绩点 × 学分) / Σ学分
@@ -292,9 +299,13 @@ def get_grade_stats():
         total_gpa_credits = 0
         weighted_avg = 0
         if grades:
-            for credit, score in grades:
-                gpa = score_to_gpa(score)
-                total_grade_points += gpa * credit
+            for credit, score, gpa in grades:
+                # 优先使用直接输入的绩点，如果没有则根据分数计算
+                if gpa is not None:
+                    grade_gpa = float(gpa)
+                else:
+                    grade_gpa = score_to_gpa(score)
+                total_grade_points += grade_gpa * credit
                 total_gpa_credits += credit
                 weighted_avg += score * credit
 

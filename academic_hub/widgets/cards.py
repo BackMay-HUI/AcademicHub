@@ -14,9 +14,9 @@ class StatCard(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(150, 100)
+        self.setMinimumSize(180, 110)
         layout = QVBoxLayout()
-        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setContentsMargins(20, 20, 20, 20)
 
         # 图标和标题行
         header = QHBoxLayout()
@@ -29,9 +29,10 @@ class StatCard(QWidget):
         title_label.setObjectName("cardTitle")
         header.addWidget(title_label)
 
-        # 值
+        # 值 - 居中显示
         value_label = QLabel(str(self.value))
         value_label.setObjectName("cardValue")
+        value_label.setAlignment(Qt.AlignCenter)
 
         layout.addLayout(header)
         layout.addWidget(value_label)

@@ -23,11 +23,11 @@ class AcademicHubApp(QWidget):
 
     def init_ui(self):
         config = load_config()
-        width = config.get("window", {}).get("width", 1400)
-        height = config.get("window", {}).get("height", 900)
+        width = config.get("window", {}).get("width", 1600)
+        height = config.get("window", {}).get("height", 1000)
 
         self.setWindowTitle("AcademicHub - 大学生学业与荣誉管理助手")
-        self.setMinimumSize(width - 200, height - 100)
+        self.setMinimumSize(1200, 800)
         self.resize(width, height)
 
         # 布局
@@ -38,7 +38,7 @@ class AcademicHubApp(QWidget):
         # 导航栏
         self.nav = NavigationWidget()
         self.nav.page_changed.connect(self.on_page_changed)
-        self.nav.setFixedWidth(220)
+        self.nav.setFixedWidth(240)
         layout.addWidget(self.nav)
 
         # 页面容器
