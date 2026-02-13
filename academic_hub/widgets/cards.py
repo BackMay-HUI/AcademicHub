@@ -55,7 +55,8 @@ class StatCard(QWidget):
             StatCard {{
                 background: {colors['card']};
                 border: 1px solid {colors['border']};
-                border-radius: 10px;
+                border-radius: 16px;
+                {colors['card_shadow']}
             }}
             #cardTitle {{
                 color: {colors['text_secondary']};
@@ -100,7 +101,8 @@ class InfoCard(QWidget):
             InfoCard {{
                 background: {colors['card']};
                 border: 1px solid {colors['border']};
-                border-radius: 8px;
+                border-radius: 12px;
+                {colors['card_shadow']}
             }}
             #cardTitle {{
                 color: {colors['text_primary']};
@@ -174,7 +176,8 @@ class ProgressCard(QWidget):
             ProgressCard {{
                 background: {colors['card']};
                 border: 1px solid {colors['border']};
-                border-radius: 8px;
+                border-radius: 12px;
+                {colors['card_shadow']}
             }}
             #cardTitle {{
                 color: {colors['text_primary']};
@@ -187,10 +190,10 @@ class ProgressCard(QWidget):
             }}
             #progressBarBg {{
                 background: {colors['border']};
-                border-radius: 4px;
+                border-radius: 6px;
             }}
             #progressBarInner {{
                 background: {colors['primary']};
-                border-radius: 4px;
+                border-radius: 6px;
             }}
         """)

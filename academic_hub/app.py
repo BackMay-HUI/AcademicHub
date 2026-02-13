@@ -87,8 +87,11 @@ class AcademicHubApp(QWidget):
         colors = theme_manager.colors
         self.setStyleSheet(f"""
             QWidget {{
-                background: {colors['background']};
+                background: {colors['background_gradient']};
                 font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+            }}
+            QMessageBox {{
+                background: {colors['card']};
             }}
         """)
 

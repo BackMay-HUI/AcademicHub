@@ -70,29 +70,37 @@ def set_gpa_method(method, custom_gpa=None):
 COLORS = {
     "light": {
         "primary": "#1E88E5",
+        "primary_light": "#42A5F5",
         "secondary": "#424242",
-        "background": "#FAFAFA",
+        "background": "#F5F7FA",
+        "background_gradient": "qlineargradient(x1:0, y1:0, x2:1, y2:1, #F5F7FA 0%, #E8EEF5 100%)",
         "card": "#FFFFFF",
+        "card_shadow": "0 4px 20px rgba(0,0,0,0.08)",
         "text_primary": "#212121",
         "text_secondary": "#757575",
         "border": "#E0E0E0",
         "success": "#4CAF50",
         "warning": "#FF9800",
         "error": "#F44336",
-        "hover": "#E3F2FD"
+        "hover": "#E3F2FD",
+        "chart_colors": ["#1E88E5", "#43A047", "#FB8C00", "#8E24AA", "#00ACC1"]
     },
     "dark": {
         "primary": "#64B5F6",
+        "primary_light": "#90CAF9",
         "secondary": "#B0BEC5",
-        "background": "#121212",
+        "background": "#0D1117",
+        "background_gradient": "qlineargradient(x1:0, y1:0, x2:1, y2:1, #0D1117 0%, #161B22 100%)",
         "card": "#1E1E1E",
+        "card_shadow": "0 4px 20px rgba(0,0,0,0.3)",
         "text_primary": "#FFFFFF",
         "text_secondary": "#B0B0B0",
         "border": "#333333",
         "success": "#81C784",
         "warning": "#FFB74D",
         "error": "#E57373",
-        "hover": "#2D2D2D"
+        "hover": "#2D2D2D",
+        "chart_colors": ["#64B5F6", "#81C784", "#FFB74D", "#BA68C8", "#4DD0E1"]
     }
 }
 

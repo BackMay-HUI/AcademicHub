@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget,
                              QTableWidgetItem, QPushButton, QComboBox, QLabel,
-                             QHeaderView, QMessageBox, QScrollArea, QFrame)
+                             QHeaderView, QMessageBox, QScrollArea, QFrame, QTabWidget)
 from PyQt5.QtCore import Qt
 from ..database import (add_grade, get_all_grades, update_grade,
                         delete_grade, get_grade_stats)
@@ -8,6 +8,7 @@ from ..config import COURSE_TYPES, SEMESTERS
 from ..utils.theme import theme_manager
 from ..widgets.dialogs import AddGradeDialog, GPASettingsDialog
 from ..widgets.cards import StatCard
+from ..widgets.charts import GradeChartWidget
 
 class GradesPage(QWidget):
     """成绩管理页面"""
@@ -72,7 +73,14 @@ class GradesPage(QWidget):
 
         layout.addLayout(filter_layout)
 
-        # 成绩表格
+        # 标签页：表格 / 图表
+        self.tab_widget = QTabWidget()
+
+        # 表格页
+        table_widget = QWidget()
+        table_layout = QVBoxLayout()
+        table_layout.setContentsMargins(0, 0, 0, 0)
+
         self.table = QTableWidget()
         self.table.setColumnCount(8)
         self.table.setHorizontalHeaderLabels(["ID", "课程名称", "类型", "学分", "成绩", "绩点", "学期", "操作"])
@@ -82,7 +90,16 @@ class GradesPage(QWidget):
         self.table.hideColumn(0)  # 隐藏ID列
         self.table.hideColumn(7)  # 隐藏操作列
 
-        layout.addWidget(self.table)
+        table_layout.addWidget(self.table)
+        table_widget.setLayout(table_layout)
+
+        # 图表页
+        self.chart_widget = GradeChartWidget()
+
+        self.tab_widget.addTab(table_widget, "成绩列表")
+        self.tab_widget.addTab(self.chart_widget, "成绩分析")
+
+        layout.addWidget(self.tab_widget)
 
         # 操作按钮
         btn_layout = QHBoxLayout()
@@ -133,6 +150,9 @@ class GradesPage(QWidget):
             # 操作列留空
 
         self.total_label.setText(f"共 {len(grades)} 门课程")
+
+        # 刷新图表
+        self.chart_widget.load_data()
 
     def on_filter_changed(self, text):
         self.current_filter = text
@@ -229,6 +249,26 @@ class GradesPage(QWidget):
                 padding: 10px;
                 padding: 6px;
                 border: none;
+            }}
+            QTabWidget::pane {{
+                border: 1px solid {colors['border']};
+                border-radius: 8px;
+                background: {colors['card']};
+            }}
+            QTabBar::tab {{
+                background: {colors['background']};
+                color: {colors['text_primary']};
+                padding: 10px 20px;
+                border: none;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }}
+            QTabBar::tab:selected {{
+                background: {colors['primary']};
+                color: white;
+            }}
+            QTabBar::tab:hover {{
+                background: {colors['hover']};
             }}
             QLabel {{
                 color: {colors['text_secondary']};
