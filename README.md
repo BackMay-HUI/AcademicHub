@@ -1,6 +1,6 @@
 # AcademicHub - 大学生学业与荣誉管理助手
 
-一款基于 Python + PyQt5 开发的本地桌面应用，帮助大学生管理学业成绩、荣誉档案、追踪毕业进度、模拟保研竞争力，并支持 Markdown 笔记和简历导出。
+一款基于 WPF + .NET 开发的本地桌面应用，帮助大学生管理学业成绩、荣誉档案、追踪毕业进度、模拟保研竞争力，并支持 Markdown 笔记和简历导出。
 
 ## 功能特点
 
@@ -10,66 +10,55 @@
 - **保研模拟** - 输入目标院校要求，评估竞争力并获取提升建议
 - **Markdown 笔记** - 支持 Markdown 语法编辑和实时预览
 - **简历导出** - 一键生成包含学业成绩和荣誉的 PDF 简历
-- **深色模式** - 支持浅色/深色主题切换，记住用户偏好
+- **主题切换** - 支持浅色/深色/樱花三种主题切换，记住用户偏好
 
 ## 技术栈
 
-- Python 3.x
-- PyQt5 5.15.10 - GUI 框架
-- PyQtChart 5.15.7 - 图表组件
-- SQLite - 本地数据库
-- Markdown - 笔记渲染
-- xhtml2pdf - PDF 生成
-- Jinja2 - 模板引擎
+- .NET 10.0
+- WPF (Windows Presentation Foundation) - GUI 框架
+- CommunityToolkit.Mvvm - MVVM 框架
+- Entity Framework Core + SQLite - ORM 和数据库
+- LiveChartsCore.SkiaSharpView.WPF - 图表组件
+- QuestPDF - PDF 生成
+- Markdig - Markdown 解析
 
 ## 项目结构
 
 ```
 Scores_management_system/
-├── main.py                 # 应用入口
-├── 启动 AcademicHub.bat    # Windows 快速启动脚本
-├── requirements.txt        # 依赖列表
-├── README.md              # 说明文档
-├── SPEC.md                # 规格说明文档
-├── 对话记录.md            # 开发对话记录
-├── data/                  # 数据目录
-│   └── academic.db        # SQLite 数据库
-└── academic_hub/          # 主应用包
-    ├── app.py             # 主窗口
-    ├── config.py          # 配置管理
-    ├── database.py        # 数据库操作
-    ├── pages/             # 各功能页面
-    │   ├── grades.py      # 成绩管理（含图表）
-    │   ├── honors.py      # 荣誉档案
-    │   ├── graduation.py  # 毕业追踪
-    │   ├── graduate.py    # 保研模拟
-    │   ├── notes.py       # Markdown笔记
-    │   └── resume.py     # 简历导出
-    ├── widgets/           # UI 组件
-    │   ├── navigation.py # 导航栏
-    │   ├── cards.py       # 卡片组件
-    │   ├── charts.py      # 图表组件
-    │   └── dialogs.py     # 对话框
-    └── utils/             # 工具函数
-        ├── theme.py       # 主题管理
-        └── export.py      # 导出功能
+├── dotnet/                    # .NET WPF 项目
+│   └── src/AcademicHub/
+│       ├── AcademicHub.csproj # 项目配置
+│       ├── App.xaml           # 应用入口
+│       ├── MainWindow.xaml    # 主窗口
+│       ├── Models/            # 数据模型
+│       ├── ViewModels/       # 视图模型
+│       ├── Views/            # 视图页面
+│       ├── Services/          # 业务服务
+│       └── Data/             # 数据库上下文
+├── data/                      # 数据目录
+│   └── academic.db           # SQLite 数据库
+├── README.md                  # 说明文档
+├── SPEC.md                    # 规格说明文档
+└── docs/                      # 文档目录
+    ├── 开发日志.md            # 开发日志
+    └── NET迁移规格.md         # 迁移规格说明
 ```
 
-## 安装
+## 安装与运行
 
-1. 克隆或下载本项目
+### 方式一：运行源码（需要 .NET 10.0 SDK）
 
-2. 安装依赖：
 ```bash
-pip install -r requirements.txt
+cd dotnet/src/AcademicHub
+dotnet run
 ```
 
-3. 运行应用：
-```bash
-python main.py
-```
+### 方式二：使用独立 exe（推荐，无需安装 .NET）
 
-或者双击 `启动 AcademicHub.bat` 快速启动
+运行 `dotnet/src/AcademicHub/bin/Release/net10.0-windows/win-x64/publish/AcademicHub.exe`
+
+该 exe 为单文件独立版本，包含 .NET 运行时，可在任意 Windows 电脑直接运行。
 
 ## 使用说明
 

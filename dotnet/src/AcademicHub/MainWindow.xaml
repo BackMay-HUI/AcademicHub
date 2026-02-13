@@ -1,0 +1,182 @@
+<Window x:Class="AcademicHub.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AcademicHub"
+        xmlns:vm="clr-namespace:AcademicHub.ViewModels"
+        xmlns:views="clr-namespace:AcademicHub.Views"
+        mc:Ignorable="d"
+        Title="AcademicHub - 学业与荣誉管理助手"
+        Height="800" Width="1400"
+        MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BackgroundBrush}">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <!-- DataTemplates for Views -->
+        <DataTemplate DataType="{x:Type vm:GradesViewModel}">
+            <views:GradesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HonorsViewModel}">
+            <views:HonorsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GraduationViewModel}">
+            <views:GraduationView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GraduateViewModel}">
+            <views:GraduateView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ResumeViewModel}">
+            <views:ResumeView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation Sidebar -->
+        <Border Grid.Column="0"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource AcrylicColor}" Opacity="0.95"/>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Direction="0" Color="#000000" Opacity="0.15"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- App Title -->
+                <StackPanel Grid.Row="0" Margin="20,25,15,25">
+                    <TextBlock Text="AcademicHub" FontSize="22" FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
+                    <TextBlock Text="学业与荣誉管理" FontSize="12"
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- Navigation Items -->
+                <ListBox Grid.Row="1" x:Name="NavList"
+                         SelectedIndex="{Binding SelectedNavIndex, Mode=TwoWay}"
+                         Background="Transparent" BorderThickness="0"
+                         Margin="10,0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Border" Padding="15,12" Margin="0,2" CornerRadius="10"
+                                                Background="Transparent" Cursor="Hand">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background"
+                                                        Value="{DynamicResource SelectedGradientBrush}"/>
+                                            </Trigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver" Value="True"/>
+                                                    <Condition Property="IsSelected" Value="False"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter TargetName="Border" Property="Background"
+                                                        Value="{DynamicResource HoverBrush}"/>
+                                            </MultiTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            <Setter Property="FontSize" Value="14"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F4CA;" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="成绩管理" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F3C6;" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="荣誉档案" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F393;" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="毕业追踪" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F4BB;" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="保研模拟" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F4C4;" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="简历导出" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+
+                <!-- Bottom Buttons -->
+                <StackPanel Grid.Row="2" Margin="15,0,15,20">
+                    <Button Command="{Binding ToggleThemeCommand}"
+                            Padding="15,10" Margin="0,5"
+                            Background="{DynamicResource SecondaryBrush}"
+                            Foreground="White" BorderThickness="0" Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" Background="{TemplateBinding Background}"
+                                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <TextBlock Text="&#x1F504;" FontSize="14" Margin="0,0,8,0"/>
+                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.7"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="切换主题"/>
+                    </Button>
+                    <TextBlock Text="{Binding CurrentTheme, StringFormat='当前: {0}'}"
+                               HorizontalAlignment="Center" FontSize="11"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <ContentControl Grid.Column="1" Content="{Binding CurrentView}" Margin="25"/>
+    </Grid>
+</Window>

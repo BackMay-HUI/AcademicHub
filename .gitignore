@@ -8,6 +8,15 @@ __pycache__/
 dist/
 build/
 
+# .NET
+dotnet/**/bin/
+dotnet/**/obj/
+dotnet/**/*.user
+dotnet/**/*.suo
+dotnet/**/*.userosscache
+dotnet/**/*.sln.docstates
+dotnet/**/packages/
+
 # IDE
 .idea/
 .vscode/
@@ -20,6 +29,8 @@ Thumbs.db
 
 # Local data (用户数据不提交)
 data/academic.db
+data/*.db-shm
+data/*.db-wal
 data/*.json
 !data/config.json.example
 
