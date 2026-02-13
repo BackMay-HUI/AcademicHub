@@ -74,12 +74,13 @@ class GradesPage(QWidget):
 
         # 成绩表格
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["ID", "课程名称", "类型", "学分", "成绩", "学期"])
+        self.table.setColumnCount(8)
+        self.table.setHorizontalHeaderLabels(["ID", "课程名称", "类型", "学分", "成绩", "绩点", "学期", "操作"])
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.hideColumn(0)  # 隐藏ID列
+        self.table.hideColumn(7)  # 隐藏操作列
 
         layout.addWidget(self.table)
 
@@ -115,12 +116,21 @@ class GradesPage(QWidget):
         # 更新表格
         self.table.setRowCount(len(grades))
         for row, grade in enumerate(grades):
+            # GPA值：优先显示直接输入的绩点，否则显示"-"
+            try:
+                gpa_value = grade['gpa']
+            except:
+                gpa_value = None
+            gpa_text = str(gpa_value) if gpa_value is not None else "-"
+
             self.table.setItem(row, 0, QTableWidgetItem(str(grade['id'])))
             self.table.setItem(row, 1, QTableWidgetItem(grade['course_name']))
             self.table.setItem(row, 2, QTableWidgetItem(grade['course_type']))
             self.table.setItem(row, 3, QTableWidgetItem(str(grade['credits'])))
             self.table.setItem(row, 4, QTableWidgetItem(str(grade['score'])))
-            self.table.setItem(row, 5, QTableWidgetItem(grade['semester']))
+            self.table.setItem(row, 5, QTableWidgetItem(gpa_text))
+            self.table.setItem(row, 6, QTableWidgetItem(grade['semester']))
+            # 操作列留空
 
         self.total_label.setText(f"共 {len(grades)} 门课程")
 
@@ -174,27 +184,30 @@ class GradesPage(QWidget):
         colors = theme_manager.colors
         self.setStyleSheet(f"""
             #pageTitle {{
-                font-size: 24px;
+                font-size: 28px;
                 font-weight: bold;
                 color: {colors['text_primary']};
             }}
             #filterLabel {{
                 color: {colors['text_secondary']};
+                font-size: 16px;
             }}
             QComboBox {{
                 background: {colors['card']};
                 color: {colors['text_primary']};
                 border: 1px solid {colors['border']};
-                padding: 6px;
+                padding: 8px 12px;
                 border-radius: 4px;
-                min-width: 100px;
+                min-width: 120px;
+                font-size: 14px;
             }}
             QPushButton {{
                 background: {colors['primary']};
                 color: white;
                 border: none;
-                padding: 8px 16px;
+                padding: 10px 20px;
                 border-radius: 4px;
+                font-size: 14px;
             }}
             QPushButton:hover {{
                 opacity: 0.9;
@@ -204,10 +217,16 @@ class GradesPage(QWidget):
                 color: {colors['text_primary']};
                 border: 1px solid {colors['border']};
                 gridline-color: {colors['border']};
+                font-size: 15px;
+            }}
+            QTableWidget::item {{
+                padding: 8px;
             }}
             QHeaderView::section {{
                 background: {colors['primary']};
                 color: white;
+                font-size: 15px;
+                padding: 10px;
                 padding: 6px;
                 border: none;
             }}

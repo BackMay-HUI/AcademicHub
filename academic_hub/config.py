@@ -15,8 +15,8 @@ DATA_DIR.mkdir(exist_ok=True)
 DEFAULT_CONFIG = {
     "theme": "light",
     "window": {
-        "width": 1600,
-        "height": 1000
+        "width": 1880,
+        "height": 1400
     },
     "gpa_method": "standard",  # standard: 标准算法, custom: 自定义绩点
     "custom_gpa": {

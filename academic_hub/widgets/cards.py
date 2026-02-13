@@ -14,25 +14,29 @@ class StatCard(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(180, 110)
+        self.setMinimumSize(220, 130)
+        self.setSizePolicy(1, 1)  # Expanding
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(8)
 
         # 图标和标题行
         header = QHBoxLayout()
+        header.setSpacing(8)
         if self.icon:
             icon_label = QLabel(self.icon)
-            icon_label.setStyleSheet("font-size: 24px;")
+            icon_label.setStyleSheet("font-size: 28px;")
             header.addWidget(icon_label)
-        header.addStretch()
         title_label = QLabel(self.title)
         title_label.setObjectName("cardTitle")
         header.addWidget(title_label)
+        header.addStretch()
 
         # 值 - 居中显示
         value_label = QLabel(str(self.value))
         value_label.setObjectName("cardValue")
         value_label.setAlignment(Qt.AlignCenter)
+        value_label.setMinimumHeight(40)
 
         layout.addLayout(header)
         layout.addWidget(value_label)
@@ -51,15 +55,15 @@ class StatCard(QWidget):
             StatCard {{
                 background: {colors['card']};
                 border: 1px solid {colors['border']};
-                border-radius: 8px;
+                border-radius: 10px;
             }}
             #cardTitle {{
                 color: {colors['text_secondary']};
-                font-size: 13px;
+                font-size: 16px;
             }}
             #cardValue {{
                 color: {colors['primary']};
-                font-size: 28px;
+                font-size: 36px;
                 font-weight: bold;
             }}
         """)

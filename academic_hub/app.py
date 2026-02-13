@@ -23,11 +23,11 @@ class AcademicHubApp(QWidget):
 
     def init_ui(self):
         config = load_config()
-        width = config.get("window", {}).get("width", 1600)
-        height = config.get("window", {}).get("height", 1000)
+        width = config.get("window", {}).get("width", 1880)
+        height = config.get("window", {}).get("height", 1400)
 
         self.setWindowTitle("AcademicHub - 大学生学业与荣誉管理助手")
-        self.setMinimumSize(1200, 800)
+        self.setMinimumSize(1400, 1000)
         self.resize(width, height)
 
         # 布局
