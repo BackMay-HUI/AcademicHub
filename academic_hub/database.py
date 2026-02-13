@@ -241,19 +241,49 @@ def get_grade_stats():
         """)
         credits_by_type = {row[0]: row[1] for row in cursor.fetchall()}
 
-        # GPA计算 (加权平均)
-        cursor.execute("""
-            SELECT SUM(credits * score) / SUM(credits) as gpa
-            FROM grades
-        """)
-        gpa = cursor.fetchone()[0] or 0
+        # 获取所有成绩用于GPA计算
+        cursor.execute("SELECT credits, score FROM grades")
+        grades = cursor.fetchall()
 
-        # 加权平均分
-        cursor.execute("""
-            SELECT SUM(credits * score) / SUM(credits) as weighted_avg
-            FROM grades
-        """)
-        weighted_avg = cursor.fetchone()[0] or 0
+        # 计算GPA: Σ(绩点 × 学分) / Σ学分
+        # 绩点转换标准: 90-100→4.0, 85-89→3.7, 82-84→3.3, 78-81→3.0, 75-77→2.7, 72-74→2.3, 68-71→2.0, 64-67→1.3, 60-63→1.0, <60→0
+        def score_to_gpa(score):
+            if score >= 90:
+                return 4.0
+            elif score >= 85:
+                return 3.7
+            elif score >= 82:
+                return 3.3
+            elif score >= 78:
+                return 3.0
+            elif score >= 75:
+                return 2.7
+            elif score >= 72:
+                return 2.3
+            elif score >= 68:
+                return 2.0
+            elif score >= 64:
+                return 1.3
+            elif score >= 60:
+                return 1.0
+            else:
+                return 0.0
+
+        total_grade_points = 0
+        total_gpa_credits = 0
+        weighted_avg = 0
+        if grades:
+            for credit, score in grades:
+                gpa = score_to_gpa(score)
+                total_grade_points += gpa * credit
+                total_gpa_credits += credit
+                weighted_avg += score * credit
+
+            gpa = total_grade_points / total_gpa_credits if total_gpa_credits > 0 else 0
+            weighted_avg = weighted_avg / total_gpa_credits if total_gpa_credits > 0 else 0
+        else:
+            gpa = 0
+            weighted_avg = 0
 
         return {
             "total_credits": total_credits,

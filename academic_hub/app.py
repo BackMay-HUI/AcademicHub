@@ -8,6 +8,7 @@ from .pages.graduate import GraduatePage
 from .pages.notes import NotesPage
 from .pages.resume import ResumePage
 from .utils.theme import theme_manager
+from .config import load_config
 
 class AcademicHubApp(QWidget):
     """主应用窗口"""
@@ -21,8 +22,13 @@ class AcademicHubApp(QWidget):
         theme_manager.theme_changed.connect(self.on_theme_changed)
 
     def init_ui(self):
+        config = load_config()
+        width = config.get("window", {}).get("width", 1400)
+        height = config.get("window", {}).get("height", 900)
+
         self.setWindowTitle("AcademicHub - 大学生学业与荣誉管理助手")
-        self.setMinimumSize(1000, 700)
+        self.setMinimumSize(width - 200, height - 100)
+        self.resize(width, height)
 
         # 布局
         layout = QHBoxLayout()
@@ -32,7 +38,7 @@ class AcademicHubApp(QWidget):
         # 导航栏
         self.nav = NavigationWidget()
         self.nav.page_changed.connect(self.on_page_changed)
-        self.nav.setFixedWidth(200)
+        self.nav.setFixedWidth(220)
         layout.addWidget(self.nav)
 
         # 页面容器
