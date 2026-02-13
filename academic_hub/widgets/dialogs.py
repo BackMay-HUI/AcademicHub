@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
                              QLineEdit, QComboBox, QPushButton, QTextEdit,
-                             QLabel, QDialogButtonBox, QDateEdit)
+                             QLabel, QDialogButtonBox, QDateEdit, QGroupBox,
+                             QRadioButton)
 from PyQt5.QtCore import Qt, QDate
 from ..config import COURSE_TYPES, HONOR_TYPES, HONOR_LEVELS, SEMESTERS
+from ..config import get_gpa_method, get_custom_gpa, set_gpa_method, load_config
 from ..utils.theme import theme_manager
 from ..database import get_student_info, save_student_info
 
@@ -326,6 +328,125 @@ class GraduationRequirementDialog(QDialog):
             }}
             QLabel {{
                 color: {colors['text_primary']};
+            }}
+            QLineEdit {{
+                background: {colors['card']};
+                color: {colors['text_primary']};
+                border: 1px solid {colors['border']};
+                padding: 6px;
+                border-radius: 4px;
+            }}
+            QPushButton {{
+                background: {colors['primary']};
+                color: white;
+                border: none;
+                padding: 6px 16px;
+                border-radius: 4px;
+            }}
+        """)
+
+class GPASettingsDialog(QDialog):
+    """绩点设置对话框"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.init_ui()
+        self.load_settings()
+
+    def init_ui(self):
+        self.setWindowTitle("绩点设置")
+        self.setMinimumWidth(500)
+
+        layout = QVBoxLayout()
+
+        # 计算方式选择
+        method_group = QGroupBox("绩点计算方式")
+        method_layout = QVBoxLayout()
+
+        self.standard_radio = QRadioButton("标准算法 (4.0制)")
+        self.custom_radio = QRadioButton("自定义绩点")
+        self.standard_radio.toggled.connect(self.on_method_changed)
+        self.custom_radio.toggled.connect(self.on_method_changed)
+
+        method_layout.addWidget(self.standard_radio)
+        method_layout.addWidget(self.custom_radio)
+        method_group.setLayout(method_layout)
+        layout.addWidget(method_group)
+
+        # 自定义绩点设置
+        self.custom_group = QGroupBox("自定义绩点映射")
+        custom_layout = QFormLayout()
+
+        # 绩点等级设置
+        self.gpa_inputs = {}
+        ranges = [("100-90", "90-100"), ("89-85", "85-89"), ("84-82", "82-84"),
+                  ("81-78", "78-81"), ("77-75", "75-77"), ("74-72", "72-74"),
+                  ("71-68", "68-71"), ("67-64", "64-67"), ("63-60", "60-63"), ("59-0", "0-59")]
+
+        for key, label in ranges:
+            le = QLineEdit()
+            le.setPlaceholderText("绩点值")
+            self.gpa_inputs[key] = le
+            custom_layout.addRow(f"{label}分 →", le)
+
+        self.custom_group.setLayout(custom_layout)
+        layout.addWidget(self.custom_group)
+
+        # 说明
+        note = QLabel("注：绩点 = Σ(绩点 × 学分) / Σ学分")
+        note.setStyleSheet("color: #888; font-size: 12px;")
+        layout.addWidget(note)
+
+        # 按钮
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.save)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+        self.setLayout(layout)
+        self.apply_theme()
+
+    def load_settings(self):
+        method = get_gpa_method()
+        if method == "custom":
+            self.custom_radio.setChecked(True)
+            custom_gpa = get_custom_gpa()
+            for key, le in self.gpa_inputs.items():
+                if key in custom_gpa:
+                    le.setText(str(custom_gpa[key]))
+        else:
+            self.standard_radio.setChecked(True)
+        self.on_method_changed()
+
+    def on_method_changed(self):
+        self.custom_group.setEnabled(self.custom_radio.isChecked())
+
+    def save(self):
+        if self.standard_radio.isChecked():
+            set_gpa_method("standard")
+        else:
+            custom_gpa = {}
+            for key, le in self.gpa_inputs.items():
+                try:
+                    value = float(le.text()) if le.text() else 0
+                    custom_gpa[key] = value
+                except:
+                    custom_gpa[key] = 0
+            set_gpa_method("custom", custom_gpa)
+        self.accept()
+
+    def apply_theme(self):
+        colors = theme_manager.colors
+        self.setStyleSheet(f"""
+            QDialog {{
+                background: {colors['background']};
+            }}
+            QLabel, QRadioButton {{
+                color: {colors['text_primary']};
+            }}
+            QGroupBox {{
+                color: {colors['text_primary']};
+                font-weight: bold;
             }}
             QLineEdit {{
                 background: {colors['card']};

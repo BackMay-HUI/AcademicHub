@@ -1,6 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
-from .config import DB_PATH
+from .config import DB_PATH, get_gpa_method, get_custom_gpa
 
 def init_db():
     """初始化数据库表"""
@@ -245,9 +245,9 @@ def get_grade_stats():
         cursor.execute("SELECT credits, score FROM grades")
         grades = cursor.fetchall()
 
-        # 计算GPA: Σ(绩点 × 学分) / Σ学分
-        # 绩点转换标准: 90-100→4.0, 85-89→3.7, 82-84→3.3, 78-81→3.0, 75-77→2.7, 72-74→2.3, 68-71→2.0, 64-67→1.3, 60-63→1.0, <60→0
-        def score_to_gpa(score):
+        # GPA计算: Σ(绩点 × 学分) / Σ学分
+        def score_to_gpa_standard(score):
+            """标准绩点转换"""
             if score >= 90:
                 return 4.0
             elif score >= 85:
@@ -268,6 +268,25 @@ def get_grade_stats():
                 return 1.0
             else:
                 return 0.0
+
+        def score_to_gpa_custom(score):
+            """自定义绩点转换"""
+            custom_gpa = get_custom_gpa()
+            for range_str, gpa_value in custom_gpa.items():
+                parts = range_str.split('-')
+                if len(parts) == 2:
+                    max_score = int(parts[0])
+                    min_score = int(parts[1])
+                    if min_score <= score <= max_score:
+                        return float(gpa_value)
+            return 0.0
+
+        # 根据配置选择GPA计算方法
+        gpa_method = get_gpa_method()
+        if gpa_method == "custom":
+            score_to_gpa = score_to_gpa_custom
+        else:
+            score_to_gpa = score_to_gpa_standard
 
         total_grade_points = 0
         total_gpa_credits = 0

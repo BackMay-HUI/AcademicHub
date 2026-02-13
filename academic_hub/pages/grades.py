@@ -6,7 +6,7 @@ from ..database import (add_grade, get_all_grades, update_grade,
                         delete_grade, get_grade_stats)
 from ..config import COURSE_TYPES, SEMESTERS
 from ..utils.theme import theme_manager
-from ..widgets.dialogs import AddGradeDialog
+from ..widgets.dialogs import AddGradeDialog, GPASettingsDialog
 from ..widgets.cards import StatCard
 
 class GradesPage(QWidget):
@@ -32,6 +32,11 @@ class GradesPage(QWidget):
         title.setObjectName("pageTitle")
         header.addWidget(title)
         header.addStretch()
+
+        # 绩点设置按钮
+        gpa_btn = QPushButton("绩点设置")
+        gpa_btn.clicked.connect(self.show_gpa_settings)
+        header.addWidget(gpa_btn)
 
         add_btn = QPushButton("+ 添加成绩")
         add_btn.clicked.connect(self.add_grade)
@@ -122,6 +127,11 @@ class GradesPage(QWidget):
     def on_filter_changed(self, text):
         self.current_filter = text
         self.load_data()
+
+    def show_gpa_settings(self):
+        dialog = GPASettingsDialog(self)
+        if dialog.exec_():
+            self.load_data()
 
     def add_grade(self):
         dialog = AddGradeDialog(self)

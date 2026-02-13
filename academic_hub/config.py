@@ -17,6 +17,19 @@ DEFAULT_CONFIG = {
     "window": {
         "width": 1400,
         "height": 900
+    },
+    "gpa_method": "standard",  # standard: 标准算法, custom: 自定义绩点
+    "custom_gpa": {
+        "100-90": 4.0,
+        "89-85": 3.7,
+        "84-82": 3.3,
+        "81-78": 3.0,
+        "77-75": 2.7,
+        "74-72": 2.3,
+        "71-68": 2.0,
+        "67-64": 1.3,
+        "63-60": 1.0,
+        "59-0": 0
     }
 }
 
@@ -34,6 +47,24 @@ def save_config(config):
     """保存配置"""
     with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
+
+def get_gpa_method():
+    """获取绩点计算方式"""
+    config = load_config()
+    return config.get("gpa_method", "standard")
+
+def get_custom_gpa():
+    """获取自定义绩点映射"""
+    config = load_config()
+    return config.get("custom_gpa", {})
+
+def set_gpa_method(method, custom_gpa=None):
+    """设置绩点计算方式"""
+    config = load_config()
+    config["gpa_method"] = method
+    if custom_gpa:
+        config["custom_gpa"] = custom_gpa
+    save_config(config)
 
 # 颜色主题
 COLORS = {
