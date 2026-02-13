@@ -1,9 +1,12 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget,
                              QTableWidgetItem, QPushButton, QComboBox, QLabel,
-                             QHeaderView, QMessageBox, QScrollArea, QFrame, QTabWidget)
+                             QHeaderView, QMessageBox, QScrollArea, QFrame, QTabWidget,
+                             QFileDialog, QMenu)
 from PyQt5.QtCore import Qt
 from ..database import (add_grade, get_all_grades, update_grade,
-                        delete_grade, get_grade_stats)
+                        delete_grade, get_grade_stats,
+                        export_grades_to_csv, import_grades_from_csv,
+                        export_all_data, import_all_data)
 from ..config import COURSE_TYPES, SEMESTERS
 from ..utils.theme import theme_manager
 from ..widgets.dialogs import AddGradeDialog, GPASettingsDialog
@@ -38,6 +41,16 @@ class GradesPage(QWidget):
         gpa_btn = QPushButton("绩点设置")
         gpa_btn.clicked.connect(self.show_gpa_settings)
         header.addWidget(gpa_btn)
+
+        # 导入按钮
+        import_btn = QPushButton("导入")
+        import_btn.clicked.connect(self.import_data)
+        header.addWidget(import_btn)
+
+        # 导出按钮
+        export_btn = QPushButton("导出")
+        export_btn.clicked.connect(self.export_data)
+        header.addWidget(export_btn)
 
         add_btn = QPushButton("+ 添加成绩")
         add_btn.clicked.connect(self.add_grade)
@@ -75,6 +88,7 @@ class GradesPage(QWidget):
 
         # 标签页：表格 / 图表
         self.tab_widget = QTabWidget()
+        self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         # 表格页
         table_widget = QWidget()
@@ -158,6 +172,13 @@ class GradesPage(QWidget):
         self.current_filter = text
         self.load_data()
 
+    def on_tab_changed(self, index):
+        """标签页切换时控制图表定时器"""
+        if index == 1:  # 成绩分析页
+            self.chart_widget.start_timer()
+        else:
+            self.chart_widget.stop_timer()
+
     def show_gpa_settings(self):
         dialog = GPASettingsDialog(self)
         if dialog.exec_():
@@ -199,6 +220,91 @@ class GradesPage(QWidget):
             grade_id = int(self.table.item(row, 0).text())
             delete_grade(grade_id)
             self.load_data()
+
+    def import_data(self):
+        """导入数据"""
+        from PyQt5.QtWidgets import QMenu
+
+        menu = QMenu(self)
+
+        csv_action = menu.addAction("导入成绩 (CSV)")
+        json_action = menu.addAction("导入全部数据 (JSON)")
+
+        action = menu.exec_(self.mapToGlobal(self.sender().pos()))
+
+        if action == csv_action:
+            self.import_csv_data()
+        elif action == json_action:
+            self.import_json_data()
+
+    def export_data(self):
+        """导出数据"""
+        from PyQt5.QtWidgets import QMenu
+
+        menu = QMenu(self)
+
+        csv_action = menu.addAction("导出成绩 (CSV)")
+        json_action = menu.addAction("导出全部数据 (JSON)")
+
+        action = menu.exec_(self.mapToGlobal(self.sender().pos()))
+
+        if action == csv_action:
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "导出成绩", "grades.csv", "CSV Files (*.csv)"
+            )
+            if file_path:
+                try:
+                    export_grades_to_csv(file_path)
+                    QMessageBox.information(self, "导出成功", f"成绩已导出到:\n{file_path}")
+                except Exception as e:
+                    QMessageBox.warning(self, "导出失败", str(e))
+
+        elif action == json_action:
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "导出备份", "academic_hub_backup.json", "JSON Files (*.json)"
+            )
+            if file_path:
+                try:
+                    export_all_data(file_path)
+                    QMessageBox.information(self, "导出成功", f"数据已导出到:\n{file_path}")
+                except Exception as e:
+                    QMessageBox.warning(self, "导出失败", str(e))
+
+    def import_csv_data(self):
+        """导入CSV成绩数据"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "导入成绩", "", "CSV Files (*.csv)"
+        )
+        if file_path:
+            try:
+                count, errors = import_grades_from_csv(file_path)
+                self.load_data()
+                if errors:
+                    QMessageBox.warning(self, "部分导入成功",
+                        f"成功导入 {count} 条记录\n\n错误:\n" + "\n".join(errors[:5]))
+                else:
+                    QMessageBox.information(self, "导入成功", f"成功导入 {count} 条记录")
+            except Exception as e:
+                QMessageBox.warning(self, "导入失败", str(e))
+
+    def import_json_data(self):
+        """导入JSON备份数据"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "导入备份", "", "JSON Files (*.json)"
+        )
+        if file_path:
+            reply = QMessageBox.question(
+                self, "确认导入",
+                "导入将追加数据到现有记录中，是否继续？",
+                QMessageBox.Yes | QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                try:
+                    import_all_data(file_path)
+                    self.load_data()
+                    QMessageBox.information(self, "导入成功", "数据导入成功！")
+                except Exception as e:
+                    QMessageBox.warning(self, "导入失败", str(e))
 
     def apply_theme(self):
         colors = theme_manager.colors

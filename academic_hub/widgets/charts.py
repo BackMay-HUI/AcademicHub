@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries, QLineSeries, QSplineSeries
 from PyQt5.QtGui import QPainter, QColor, QBrush
 from ..utils.theme import theme_manager
@@ -10,10 +10,31 @@ class GradeChartWidget(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.last_data_hash = None  # 用于检测数据变化
         self.init_ui()
         self.apply_theme()
 
         theme_manager.theme_changed.connect(self.on_theme_changed)
+
+        # 设置定时器，每3秒自动刷新图表
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.check_and_refresh)
+        self.timer.start(3000)
+
+    def check_and_refresh(self):
+        """检查数据是否变化，如有变化则刷新图表"""
+        grades = get_all_grades()
+        stats = get_grade_stats()
+
+        # 计算数据hash来判断是否有变化
+        current_hash = hash((
+            tuple(sorted(g['score'] for g in grades)),
+            tuple(sorted(stats.get('credits_by_type', {}).items()))
+        ))
+
+        if self.last_data_hash != current_hash:
+            self.last_data_hash = current_hash
+            self.load_data()
 
     def init_ui(self):
         layout = QVBoxLayout()
@@ -132,3 +153,16 @@ class GradeChartWidget(QWidget):
 
     def on_theme_changed(self, theme_name):
         self.apply_theme()
+
+    def start_timer(self):
+        """启动定时器（当切换到图表页面时调用）"""
+        if not self.timer.isActive():
+            self.timer.start(3000)
+            # 立即刷新一次
+            self.last_data_hash = None
+            self.load_data()
+
+    def stop_timer(self):
+        """停止定时器（当离开图表页面时调用）"""
+        if self.timer.isActive():
+            self.timer.stop()

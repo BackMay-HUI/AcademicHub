@@ -352,5 +352,116 @@ def get_honor_stats():
             "by_level": by_level
         }
 
+# ===== 数据导入/导出 =====
+import csv
+import json
+import os
+
+def export_grades_to_csv(file_path):
+    """导出成绩到CSV文件"""
+    grades = get_all_grades()
+    with open(file_path, 'w', newline='', encoding='utf-8-sig') as f:
+        writer = csv.writer(f)
+        writer.writerow(['课程名称', '类型', '学分', '成绩', '绩点', '学期'])
+        for grade in grades:
+            writer.writerow([
+                grade['course_name'],
+                grade['course_type'],
+                grade['credits'],
+                grade['score'],
+                grade['gpa'] or '',
+                grade['semester']
+            ])
+
+def import_grades_from_csv(file_path):
+    """从CSV文件导入成绩"""
+    imported_count = 0
+    errors = []
+    with open(file_path, 'r', encoding='utf-8-sig') as f:
+        reader = csv.reader(f)
+        next(reader)  # 跳过表头
+        for row in reader:
+            if len(row) >= 6:
+                try:
+                    course_name = row[0].strip()
+                    course_type = row[1].strip()
+                    credits = float(row[2])
+                    score = float(row[3])
+                    gpa = float(row[4]) if row[4].strip() else None
+                    semester = row[5].strip()
+                    add_grade(course_name, course_type, credits, score, semester, gpa)
+                    imported_count += 1
+                except Exception as e:
+                    errors.append(f"行 {row}: {str(e)}")
+    return imported_count, errors
+
+def export_all_data(file_path):
+    """导出所有数据为JSON备份"""
+    data = {
+        'grades': [dict(row) for row in get_all_grades()],
+        'honors': [dict(row) for row in get_all_honors()],
+        'notes': [dict(row) for row in get_all_notes()],
+        'graduation_requirements': [dict(row) for row in get_graduation_requirements()],
+        'student_info': dict(get_all_grades()) if get_all_grades() else {}
+    }
+
+    # 添加学生信息
+    student = get_student_info()
+    if student:
+        data['student_info'] = dict(student)
+
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def import_all_data(file_path):
+    """从JSON备份导入所有数据"""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+
+        # 导入成绩
+        if 'grades' in data:
+            for grade in data['grades']:
+                cursor.execute(
+                    "INSERT INTO grades (course_name, course_type, credits, score, gpa, semester) VALUES (?, ?, ?, ?, ?, ?)",
+                    (grade['course_name'], grade['course_type'], grade['credits'], grade['score'], grade.get('gpa'), grade['semester'])
+                )
+
+        # 导入荣誉
+        if 'honors' in data:
+            for honor in data['honors']:
+                cursor.execute(
+                    "INSERT INTO honors (title, type, level, date, description) VALUES (?, ?, ?, ?, ?)",
+                    (honor['title'], honor['type'], honor['level'], honor['date'], honor.get('description'))
+                )
+
+        # 导入笔记
+        if 'notes' in data:
+            for note in data['notes']:
+                cursor.execute(
+                    "INSERT INTO notes (title, content, category, tags) VALUES (?, ?, ?, ?)",
+                    (note['title'], note.get('content'), note.get('category'), note.get('tags'))
+                )
+
+        # 导入毕业要求
+        if 'graduation_requirements' in data:
+            for req in data['graduation_requirements']:
+                cursor.execute(
+                    "INSERT INTO graduation_requirements (requirement_type, required_credits) VALUES (?, ?)",
+                    (req['requirement_type'], req['required_credits'])
+                )
+
+        # 导入学生信息
+        if 'student_info' in data and data['student_info']:
+            info = data['student_info']
+            cursor.execute(
+                "INSERT INTO student_info (name, student_id, major, grade, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
+                (info.get('name'), info.get('student_id'), info.get('major'), info.get('grade'), info.get('phone'), info.get('email'))
+            )
+
+        conn.commit()
+
 # 初始化数据库
 init_db()

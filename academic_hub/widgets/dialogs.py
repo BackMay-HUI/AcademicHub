@@ -63,8 +63,9 @@ class AddGradeDialog(QDialog):
             self.course_type.setCurrentText(self.grade_data['course_type'])
             self.credits.setText(str(self.grade_data['credits']))
             self.score.setText(str(self.grade_data['score']))
-            if self.grade_data.get('gpa'):
-                self.gpa.setText(str(self.grade_data['gpa']))
+            gpa_val = self.grade_data['gpa']
+            if gpa_val is not None:
+                self.gpa.setText(str(gpa_val))
             self.semester.setCurrentText(self.grade_data['semester'])
 
         self.setLayout(layout)
