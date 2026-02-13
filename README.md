@@ -38,19 +38,19 @@ Scores_management_system/
     ├── config.py          # 配置管理
     ├── database.py        # 数据库操作
     ├── pages/             # 各功能页面
-    │   ├── grades.py      # 成绩管理
-    │   ├── honors.py      # 荣誉档案
-    │   ├── graduation.py  # 毕业追踪
-    │   ├── graduate.py    # 保研模拟
-    │   ├── notes.py       # Markdown笔记
-    │   └── resume.py      # 简历导出
-    ├── widgets/           # UI 组件
-    │   ├── navigation.py  # 导航栏
+    │   ├── grades.py     # 成绩管理
+    │   ├── honors.py     # 荣誉档案
+    │   ├── graduation.py # 毕业追踪
+    │   ├── graduate.py   # 保研模拟
+    │   ├── notes.py      # Markdown笔记
+    │   └── resume.py     # 简历导出
+    ├── widgets/          # UI 组件
+    │   ├── navigation.py # 导航栏
     │   ├── cards.py      # 卡片组件
     │   └── dialogs.py    # 对话框
     └── utils/            # 工具函数
-        ├── theme.py       # 主题管理
-        └── export.py      # 导出功能
+        ├── theme.py      # 主题管理
+        └── export.py    # 导出功能
 ```
 
 ## 安装
@@ -76,6 +76,8 @@ python main.py
 - 课程名称、类型（必修/选修/限选）、学分、成绩
 - **绩点（选填）**：可直接输入该科目的绩点，不输入则自动根据分数计算
 - 学期：支持大一上、大一下、大二上、大二下等
+
+表格中会显示每门课程的绩点信息。
 
 GPA 计算公式：`GPA = Σ(绩点 × 学分) / Σ学分`
 
