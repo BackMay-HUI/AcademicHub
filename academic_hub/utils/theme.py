@@ -29,7 +29,10 @@ class ThemeManager(QObject):
 
     def toggle_theme(self):
         """切换主题"""
-        new_theme = "dark" if self._current_theme == "light" else "light"
+        themes = ["light", "dark", "sakura"]
+        current_index = themes.index(self._current_theme) if self._current_theme in themes else 0
+        new_index = (current_index + 1) % len(themes)
+        new_theme = themes[new_index]
         self.set_theme(new_theme)
 
 # 全局主题管理器实例

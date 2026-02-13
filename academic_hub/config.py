@@ -101,6 +101,23 @@ COLORS = {
         "error": "#E57373",
         "hover": "#2D2D2D",
         "chart_colors": ["#64B5F6", "#81C784", "#FFB74D", "#BA68C8", "#4DD0E1"]
+    },
+    "sakura": {
+        "primary": "#FFB7C5",
+        "primary_light": "#FFC0CB",
+        "secondary": "#8B4557",
+        "background": "#FFF0F5",
+        "background_gradient": "qlineargradient(x1:0, y1:0, x2:1, y2:1, #FFF0F5 0%, #FFE4E1 100%)",
+        "card": "#FFFFFF",
+        "card_shadow": "0 4px 20px rgba(255,183,197,0.3)",
+        "text_primary": "#5D3A3A",
+        "text_secondary": "#8B6B6B",
+        "border": "#FFD1DC",
+        "success": "#98D8AA",
+        "warning": "#FFD700",
+        "error": "#FF6B6B",
+        "hover": "#FFF5F8",
+        "chart_colors": ["#FFB7C5", "#DDA0DD", "#FFB6C1", "#FF69B4", "#DB7093"]
     }
 }
 

@@ -46,7 +46,7 @@ class NavigationWidget(QWidget):
 
         # 主题切换按钮
         layout.addStretch()
-        self.theme_btn = QPushButton("🌙 切换主题")
+        self.theme_btn = QPushButton("🎨 主题")
         self.theme_btn.setObjectName("themeButton")
         self.theme_btn.clicked.connect(self.toggle_theme)
         layout.addWidget(self.theme_btn)
