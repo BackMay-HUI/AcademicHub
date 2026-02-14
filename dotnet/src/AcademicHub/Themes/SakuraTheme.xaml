@@ -16,15 +16,35 @@
     <Color x:Key="HoverColor">#FFF0F3</Color>
     <Color x:Key="SelectedColor">#FFE0E6</Color>
 
-    <!-- Acrylic/Glass Effect Colors -->
-    <Color x:Key="AcrylicColor">#F0FFFFFF</Color>
-    <Color x:Key="AcrylicBorderColor">#60FFB7C5</Color>
+    <!-- Acrylic/Glass Effect Colors - Enhanced for sakura theme -->
+    <Color x:Key="AcrylicColor">#E8FFF5F7</Color>
+    <Color x:Key="AcrylicBorderColor">#50FFB7C5</Color>
+    <Color x:Key="AcrylicHighlightColor">#F5FFF5F7</Color>
+
+    <!-- Gradient Background Colors -->
+    <LinearGradientBrush x:Key="BackgroundGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFF5F7" Offset="0"/>
+        <GradientStop Color="#FFF0F3" Offset="0.5"/>
+        <GradientStop Color="#FFF5F7" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Decorative Gradient Blocks -->
+    <LinearGradientBrush x:Key="DecoGradientBlue" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF8FA3" Offset="0"/>
+        <GradientStop Color="#FFB7C5" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="DecoGradientPurple" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#DDA0DD" Offset="0"/>
+        <GradientStop Color="#E6E6FA" Offset="1"/>
+    </LinearGradientBrush>
 
     <!-- Card Shadow Effect - 柔和粉红阴影 -->
-    <DropShadowEffect x:Key="CardShadow" BlurRadius="18" ShadowDepth="2"
-                      Direction="270" Color="#FFB7C5" Opacity="0.2"/>
-    <DropShadowEffect x:Key="CardShadowHover" BlurRadius="22" ShadowDepth="4"
-                      Direction="270" Color="#FFB7C5" Opacity="0.25"/>
+    <DropShadowEffect x:Key="CardShadow" BlurRadius="22" ShadowDepth="3"
+                      Direction="270" Color="#FFB7C5" Opacity="0.22"/>
+    <DropShadowEffect x:Key="CardShadowHover" BlurRadius="30" ShadowDepth="6"
+                      Direction="270" Color="#FFB7C5" Opacity="0.28"/>
+    <DropShadowEffect x:Key="ElevatedShadow" BlurRadius="38" ShadowDepth="8"
+                      Direction="270" Color="#FF8FA3" Opacity="0.2"/>
 
     <!-- Card Corner Radius -->
     <CornerRadius x:Key="CardCornerRadius">14</CornerRadius>
@@ -53,6 +73,13 @@
         <GradientStop Color="#FF8FA3" Offset="0"/>
         <GradientStop Color="#FFB7C5" Offset="0.5"/>
         <GradientStop Color="#FFD4E4" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Card Gradient Border -->
+    <LinearGradientBrush x:Key="CardGradientBorderBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFE4E9" Offset="0"/>
+        <GradientStop Color="#FFF0F3" Offset="0.5"/>
+        <GradientStop Color="#FFE4E9" Offset="1"/>
     </LinearGradientBrush>
 
     <!-- Chart Colors - 甜美粉彩色 -->
@@ -105,19 +132,27 @@
         <Setter Property="Effect" Value="{DynamicResource CardShadow}"/>
     </Style>
 
-    <!-- Nav Item Style -->
+    <!-- Nav Item Style - 增强悬停动画 -->
     <Style x:Key="NavItemStyle" TargetType="ListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
-                    <Border x:Name="Border" Padding="15,12" Margin="0,2" CornerRadius="10"
+                    <Border x:Name="Border" Padding="15,12" Margin="0,2" CornerRadius="12"
                             Background="Transparent" Cursor="Hand">
+                        <Border.RenderTransform>
+                            <TranslateTransform X="0"/>
+                        </Border.RenderTransform>
                         <ContentPresenter/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="Background"
                                     Value="{DynamicResource SelectedGradientBrush}"/>
+                            <Setter TargetName="Border" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect BlurRadius="14" ShadowDepth="2" Color="#FF8FA3" Opacity="0.35"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -126,12 +161,18 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Border" Property="Background"
                                     Value="{DynamicResource HoverBrush}"/>
+                            <Setter TargetName="Border" Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform X="5"/>
+                                </Setter.Value>
+                            </Setter>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="FontSize" Value="14"/>
     </Style>
 
     <!-- Enhanced ComboBox Style -->
