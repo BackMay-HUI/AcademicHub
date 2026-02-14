@@ -212,6 +212,12 @@
         </Border>
 
         <!-- Main Content Area -->
-        <ContentControl Grid.Column="1" Content="{Binding CurrentView}" Margin="25"/>
+        <ContentControl Grid.Column="1" Content="{Binding CurrentView}" Margin="25">
+            <ContentControl.Resources>
+                <Style TargetType="ScrollViewer">
+                    <EventSetter Event="PreviewMouseWheel" Handler="MainContent_PreviewMouseWheel"/>
+                </Style>
+            </ContentControl.Resources>
+        </ContentControl>
     </Grid>
 </Window>

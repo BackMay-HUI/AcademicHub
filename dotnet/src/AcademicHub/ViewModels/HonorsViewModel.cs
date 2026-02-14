@@ -9,6 +9,7 @@ namespace AcademicHub.ViewModels;
 public partial class HonorsViewModel : ObservableObject
 {
     private readonly DatabaseService _dbService;
+    private readonly ExportService _exportService;
 
     [ObservableProperty]
     private ObservableCollection<Honor> _honors = new();
@@ -70,6 +71,7 @@ public partial class HonorsViewModel : ObservableObject
     public HonorsViewModel()
     {
         _dbService = new DatabaseService();
+        _exportService = new ExportService(_dbService);
         _ = LoadHonorsAsync();
     }
 
@@ -170,5 +172,17 @@ public partial class HonorsViewModel : ObservableObject
         NewLevel = "校级";
         NewDate = DateTime.Now.ToString("yyyy-MM-dd");
         NewDescription = "";
+    }
+
+    public async Task ExportCsv(string filePath)
+    {
+        await _exportService.ExportHonorsToCsvAsync(filePath);
+    }
+
+    public async Task<(int count, List<string> errors)> ImportCsv(string filePath)
+    {
+        var (importedCount, errors) = await _exportService.ImportHonorsFromCsvAsync(filePath);
+        await LoadHonorsAsync();
+        return (importedCount, errors);
     }
 }

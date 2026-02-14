@@ -331,6 +331,68 @@
                         </StackPanel>
 
                         <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button Click="ImportCsv_Click"
+                                    Padding="12,8" Margin="0,0,8,0"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Foreground="White" BorderThickness="0" Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border" Background="{TemplateBinding Background}"
+                                                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <TextBlock Text="&#x1F4C1;" FontSize="12" Margin="0,0,6,0"/>
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.7"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <TextBlock Text="导入" FontSize="12"/>
+                            </Button>
+                            <Button Click="ExportCsv_Click"
+                                    Padding="12,8"
+                                    Background="{DynamicResource PrimaryBrush}"
+                                    Foreground="White" BorderThickness="0" Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border" Background="{TemplateBinding Background}"
+                                                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <TextBlock Text="&#x1F4C2;" FontSize="12" Margin="0,0,6,0"/>
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.7"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <TextBlock Text="导出" FontSize="12"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>

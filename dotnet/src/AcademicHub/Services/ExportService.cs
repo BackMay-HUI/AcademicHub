@@ -106,6 +106,65 @@ public class ExportService
         return fields.ToArray();
     }
 
+    // ===== Honors CSV Export/Import =====
+    public async Task ExportHonorsToCsvAsync(string filePath)
+    {
+        var honors = await _dbService.GetAllHonorsAsync();
+        var sb = new StringBuilder();
+
+        // Header
+        sb.AppendLine("荣誉名称,类型,级别,日期,描述");
+
+        // Data
+        foreach (var honor in honors)
+        {
+            sb.AppendLine($"\"{honor.Title}\",\"{honor.Type}\",\"{honor.Level}\",\"{honor.Date}\",\"{honor.Description ?? ""}\"");
+        }
+
+        await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8);
+    }
+
+    public async Task<(int importedCount, List<string> errors)> ImportHonorsFromCsvAsync(string filePath)
+    {
+        var errors = new List<string>();
+        var importedCount = 0;
+
+        var lines = await File.ReadAllLinesAsync(filePath);
+        if (lines.Length <= 1) return (0, errors); // No data
+
+        // Skip header
+        for (int i = 1; i < lines.Length; i++)
+        {
+            try
+            {
+                var line = lines[i];
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                // Simple CSV parsing (handles quoted fields)
+                var fields = ParseCsvLine(line);
+                if (fields.Length < 4) continue;
+
+                var honor = new Honor
+                {
+                    Title = fields[0].Trim(),
+                    Type = fields[1].Trim(),
+                    Level = fields[2].Trim(),
+                    Date = fields[3].Trim(),
+                    Description = fields.Length > 4 ? fields[4].Trim() : ""
+                };
+
+                await _dbService.AddHonorAsync(honor);
+                importedCount++;
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"行 {i + 1}: {ex.Message}");
+            }
+        }
+
+        return (importedCount, errors);
+    }
+
     // ===== JSON Export/Import =====
     public async Task ExportAllDataAsync(string filePath)
     {
